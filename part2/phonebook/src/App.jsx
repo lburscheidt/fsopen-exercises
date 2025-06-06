@@ -1,5 +1,64 @@
 import { useState } from "react";
 
+const Filter = (props) => {
+	return (
+		<div>
+			filter shown with{" "}
+			<input value={props.filter} onChange={props.handleFilter} />
+		</div>
+	);
+};
+
+const EntryForm = (props) => {
+	return (
+		<form onSubmit={props.addEntry}>
+			<table>
+				<tbody>
+					<tr>
+						<td>name:</td>
+						<td>
+							<input value={props.newName} onChange={props.handleNameChange} />
+						</td>
+					</tr>
+					<tr>
+						<td>number:</td>
+						<td>
+							<input
+								value={props.newNumber}
+								onChange={props.handleNumberChange}
+							/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div>
+				<button type="submit">add</button>
+			</div>
+		</form>
+	);
+};
+
+const Entries = (props) => {
+	return (
+		<table>
+			<tbody>
+				{(props.filter ? props.filteredEntries : props.entries).map((entry) => (
+					<Entry key={entry.name} entry={entry} />
+				))}
+			</tbody>
+		</table>
+	);
+};
+
+const Entry = ({ entry }) => {
+	return (
+		<tr key={entry.name}>
+			<td> {entry.name}</td>
+			<td>{entry.number}</td>
+		</tr>
+	);
+};
 const App = () => {
 	const [entries, setEntries] = useState([
 		{ name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -46,49 +105,20 @@ const App = () => {
 		<div>
 			<h2>Phone book</h2>
 			<h3>Add a new entry</h3>
-			<div>
-				filter shown with <input value={filter} onChange={handleFilter} />
-			</div>
-			<form onSubmit={addEntry}>
-				<table>
-					<tbody>
-						<tr>
-							<td>name:</td>
-							<td>
-								<input value={newName} onChange={handleNameChange} />
-							</td>
-						</tr>
-						<tr>
-							<td>number:</td>
-							<td>
-								<input value={newNumber} onChange={handleNumberChange} />
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
-				<div>
-					<button type="submit">add</button>
-				</div>
-			</form>
+			<Filter filter={filter} handleFilter={handleFilter} />
+			<EntryForm
+				addEntry={addEntry}
+				newNumber={newNumber}
+				newName={newName}
+				handleNameChange={handleNameChange}
+				handleNumberChange={handleNumberChange}
+			/>
 			<h2>Numbers</h2>
-			<table>
-				<tbody>
-					{filter
-						? filteredEntries.map((entry) => (
-								<tr key={entry.name}>
-									<td> {entry.name}</td>
-									<td>{entry.number}</td>
-								</tr>
-							))
-						: entries.map((entry) => (
-								<tr key={entry.name}>
-									<td> {entry.name}</td>
-									<td>{entry.number}</td>
-								</tr>
-							))}
-				</tbody>
-			</table>
+			<Entries
+				entries={entries}
+				filteredEntries={filteredEntries}
+				filter={filter}
+			/>
 		</div>
 	);
 };
