@@ -101,7 +101,15 @@ const App = () => {
 		const existingEntry = entries.find((entry) => entry.name === newEntry.name);
 		/**alert when someone's name is already in the phone book */
 		if (existingEntry) {
-			alert(`${newName} is already in the phone book`);
+			if (window.confirm(`${newName} is already in the phone book`)) {
+				entryService.update(existingEntry.id, newEntry).then((response) => {
+					setEntries(
+						entries.map((entry) =>
+							entry.id !== newEntry.id ? entry : response,
+						),
+					);
+				});
+			}
 			/**reset newName and newNumber */
 			setNewName("");
 			setNewNumber("");
