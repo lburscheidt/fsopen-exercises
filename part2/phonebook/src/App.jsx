@@ -83,20 +83,31 @@ const App = () => {
 	);
 
 	const addEntry = (e) => {
+		/**Prevent default action (submitting the form) */
 		e.preventDefault();
+		/**Create variables for new and existing entry*/
 		const newEntry = { name: newName, number: newNumber };
 		const existingEntry = entries.find((entry) => entry.name === newEntry.name);
+		/**alert when someone's name is already in the phone book */
 		if (existingEntry) {
-			alert(`${newName} is already in the phonebook`);
-			setNewName("");
-		} else {
-			setEntries(entries.concat(newEntry));
+			alert(`${newName} is already in the phone book`);
+			/**reset newName and newNumber */
 			setNewName("");
 			setNewNumber("");
-			console.log(entries);
+		} else {
+			/**send entry to server */
+			axios
+				.post("http://localhost:3001/entries", newEntry)
+				/**get entry from server and add to entries array */
+				.then((retrievedEntries) => {
+					setEntries(entries.concat(retrievedEntries.data));
+					/**reset newName and newNumber */
+					setNewName("");
+					setNewNumber("");
+				});
 		}
 	};
-
+	/**Fetch initial entries from server */
 	useEffect(() => {
 		console.log("effect");
 		axios.get("http://localhost:3001/entries").then((entriesFromServer) => {
