@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import entryService from "./services/entries";
 
 const Filter = (props) => {
 	return (
@@ -42,22 +43,20 @@ const EntryForm = (props) => {
 
 const Entries = (props) => {
 	return (
-		<table>
-			<tbody>
-				{(props.filter ? props.filteredEntries : props.entries).map((entry) => (
-					<Entry key={entry.name} entry={entry} />
-				))}
-			</tbody>
-		</table>
+		<div>
+			{props.filteredEntries.map((entry) => (
+				<Entry key={entry.name} entry={entry} />
+			))}
+		</div>
 	);
 };
 
 const Entry = ({ entry }) => {
 	return (
-		<tr key={entry.name}>
-			<td> {entry.name}</td>
-			<td>{entry.number}</td>
-		</tr>
+		<p key={entry.name}>
+			{" "}
+			{entry.name} {entry.number}
+		</p>
 	);
 };
 const App = () => {
@@ -65,6 +64,14 @@ const App = () => {
 	const [newName, setNewName] = useState("");
 	const [newNumber, setNewNumber] = useState("");
 	const [filter, setFilter] = useState("");
+
+	/**Fetch initial entries from server */
+	useEffect(() => {
+		console.log("effect");
+		entryService.getAll().then((response) => {
+			setEntries(response);
+		});
+	}, []);
 
 	const handleNameChange = (e) => {
 		setNewName(e.target.value);
@@ -78,9 +85,11 @@ const App = () => {
 		setFilter(e.target.value);
 	};
 
-	const filteredEntries = entries.filter((entry) =>
-		entry.name.toLowerCase().startsWith(filter.toLowerCase()),
-	);
+	const filteredEntries = filter
+		? entries.filter((entry) =>
+				entry.name.toLowerCase().startsWith(filter.toLowerCase()),
+			)
+		: entries;
 
 	const addEntry = (e) => {
 		/**Prevent default action (submitting the form) */
@@ -96,24 +105,15 @@ const App = () => {
 			setNewNumber("");
 		} else {
 			/**send entry to server */
-			axios
-				.post("http://localhost:3001/entries", newEntry)
+			entryService.create(newEntry).then((response) => {
 				/**get entry from server and add to entries array */
-				.then((retrievedEntries) => {
-					setEntries(entries.concat(retrievedEntries.data));
-					/**reset newName and newNumber */
-					setNewName("");
-					setNewNumber("");
-				});
+				setEntries(entries.concat(response));
+			});
+			/**reset newName and newNumber */
+			setNewName("");
+			setNewNumber("");
 		}
 	};
-	/**Fetch initial entries from server */
-	useEffect(() => {
-		console.log("effect");
-		axios.get("http://localhost:3001/entries").then((entriesFromServer) => {
-			setEntries(entriesFromServer.data);
-		});
-	}, []);
 
 	return (
 		<div>
@@ -128,11 +128,7 @@ const App = () => {
 				handleNumberChange={handleNumberChange}
 			/>
 			<h2>Numbers</h2>
-			<Entries
-				entries={entries}
-				filteredEntries={filteredEntries}
-				filter={filter}
-			/>
+			<Entries filteredEntries={filteredEntries} filter={filter} />
 		</div>
 	);
 };
