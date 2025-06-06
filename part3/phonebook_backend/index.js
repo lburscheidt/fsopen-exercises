@@ -64,6 +64,24 @@ app.get("/info", (request, response) => {
 app.post("/api/entries", (request, response) => {
 	const body = request.body;
 
+	if (!body.name) {
+		return response.status(400).json({
+			error: "name missing",
+		});
+	}
+
+	if (!body.number) {
+		return response.status(400).json({
+			error: "number missing",
+		});
+	}
+
+	if (entries.find((entry) => entry.name === body.name)) {
+		return response.status(400).json({
+			error: "name must be unique",
+		});
+	}
+
 	const entry = {
 		name: body.name,
 		number: body.number,
