@@ -54,7 +54,7 @@ const Entries = (props) => {
 const Entry = (props) => {
 	return (
 		<p key={props.entry.name}>
-			{props.entry.name} {props.entry.number} {props.entry.id}{" "}
+			{props.entry.name} {props.entry.number}
 			<button
 				type="button"
 				onClick={() => props.deleteEntry(props.entry.id, props.entry.name)}
@@ -189,8 +189,8 @@ const App = () => {
 		<div>
 			<h2>Phone book</h2>
 			<Notification message={message} msgType={msgType} />
-			<h3>Add a new entry</h3>
 			<Filter filter={filter} handleFilter={handleFilter} />
+			<h3>Add a new entry</h3>
 			<EntryForm
 				addEntry={addEntry}
 				newNumber={newNumber}
