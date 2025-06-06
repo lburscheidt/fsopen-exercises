@@ -12,7 +12,7 @@ morgan.token("id", function getId(req) {
 morgan.token("body", function getId(req) {
 	return JSON.stringify(req.body);
 });
-app.use(cors());
+
 app.use(express.json());
 app.use(express.static("dist"));
 app.use(
