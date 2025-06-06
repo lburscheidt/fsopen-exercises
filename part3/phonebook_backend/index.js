@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 let entries = [
 	{
@@ -49,11 +50,29 @@ app.delete("/api/entries/:id", (request, response) => {
 	response.status(204).end();
 });
 
+const generateId = () => {
+	return String(Math.floor(Math.random() * 100));
+};
+
 app.get("/info", (request, response) => {
 	const date = new Date();
 	response.send(
-		`<p>Phonebook has information for ${entries.length} people</p><p>${date}</p>`,
+		`<p>Phone book has information for ${entries.length} people</p><p>${date}</p>`,
 	);
+});
+
+app.post("/api/entries", (request, response) => {
+	const body = request.body;
+
+	const entry = {
+		name: body.name,
+		number: body.number,
+		id: generateId(),
+	};
+
+	entries = entries.concat(entry);
+
+	response.json(entry);
 });
 
 const PORT = 3001;
