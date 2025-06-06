@@ -13,6 +13,7 @@ const App = () => {
 	];
 
 	const [selected, setSelected] = useState(0);
+	const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
 
 	const getRandomInt = (min, max) => {
 		const minCeiled = Math.ceil(min);
@@ -24,10 +25,19 @@ const App = () => {
 		console.log(selected);
 	};
 
+	const voteForAnecdote = () => {
+		const votesCopy = [...votes];
+		votesCopy[selected] += 1;
+		setVotes(votesCopy);
+	};
+
 	return (
 		<div>
-			{anecdotes[selected]}
-			<br />
+			<p>{anecdotes[selected]}</p>
+			<p>has {votes[selected]} {votes[selected] === 1 ? "vote" : "votes"}</p>
+			<button type="button" onClick={voteForAnecdote}>
+				vote
+			</button>
 			<button type="button" onClick={selectAnecdote}>
 				next anecdote
 			</button>
