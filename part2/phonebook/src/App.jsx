@@ -9,6 +9,7 @@ const App = () => {
 	]);
 	const [newName, setNewName] = useState("");
 	const [newNumber, setNewNumber] = useState("");
+	const [filter, setFilter] = useState("");
 
 	const handleNameChange = (e) => {
 		setNewName(e.target.value);
@@ -17,6 +18,14 @@ const App = () => {
 	const handleNumberChange = (e) => {
 		setNewNumber(e.target.value);
 	};
+
+	const handleFilter = (e) => {
+		setFilter(e.target.value);
+	};
+
+	const filteredEntries = entries.filter((entry) =>
+		entry.name.toLowerCase().startsWith(filter.toLowerCase()),
+	);
 
 	const addEntry = (e) => {
 		e.preventDefault();
@@ -36,6 +45,10 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phone book</h2>
+			<h3>Add a new entry</h3>
+			<div>
+				filter shown with <input value={filter} onChange={handleFilter} />
+			</div>
 			<form onSubmit={addEntry}>
 				<table>
 					<tbody>
@@ -61,12 +74,19 @@ const App = () => {
 			<h2>Numbers</h2>
 			<table>
 				<tbody>
-					{entries.map((entry) => (
-						<tr key={entry.name}>
-							<td> {entry.name}</td>
-							<td>{entry.number}</td>
-						</tr>
-					))}
+					{filter
+						? filteredEntries.map((entry) => (
+								<tr key={entry.name}>
+									<td> {entry.name}</td>
+									<td>{entry.number}</td>
+								</tr>
+							))
+						: entries.map((entry) => (
+								<tr key={entry.name}>
+									<td> {entry.name}</td>
+									<td>{entry.number}</td>
+								</tr>
+							))}
 				</tbody>
 			</table>
 		</div>
