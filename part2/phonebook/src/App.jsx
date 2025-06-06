@@ -11,9 +11,17 @@ const App = () => {
 	const addEntry = (e) => {
 		e.preventDefault();
 		const newEntry = { name: newName };
-		setEntries(entries.concat(newEntry));
-		console.log(entries);
+		const existingEntry = entries.find((entry) => entry.name === newEntry.name);
+		if (existingEntry) {
+			alert(`${newName} is already in the phonebook`);
+			setNewName("");
+		} else {
+			setEntries(entries.concat(newEntry));
+			setNewName("");
+			console.log(entries);
+		}
 	};
+
 	return (
 		<div>
 			<h2>Phone book</h2>
