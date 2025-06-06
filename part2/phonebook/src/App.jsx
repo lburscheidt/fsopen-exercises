@@ -151,19 +151,30 @@ const App = () => {
 			setNewNumber("");
 		} else {
 			/**send entry to server */
-			entryService.create(newEntry).then((response) => {
-				/**get entry from server and add to entries array */
-				setEntries(entries.concat(response));
-			});
+			entryService
+				.create(newEntry)
+				.then((response) => {
+					/**get entry from server and add to entries array */
+					setEntries(entries.concat(response));
+					setNewName("");
+					setNewNumber("");
+					setMessage(`Successfully added ${newEntry.name}`);
+					setMsgType("success");
+					setTimeout(() => {
+						setMessage("");
+						setMsgType("");
+					}, 5000);
+				})
+				.catch((error) => {
+					console.log(error.response.data.error);
+					setMessage(error.response.data.error);
+					setMsgType("error");
+					setTimeout(() => {
+						setMessage("");
+						setMsgType("");
+					}, 5000);
+				});
 			/**reset newName and newNumber */
-			setNewName("");
-			setNewNumber("");
-			setMessage(`Successfully added ${newEntry.name}`);
-			setMsgType("success");
-			setTimeout(() => {
-				setMessage("");
-				setMsgType("");
-			}, 5000);
 		}
 	};
 

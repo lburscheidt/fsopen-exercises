@@ -62,25 +62,26 @@ app.get("/info", (request, response) => {
 });
 
 app.put("/api/entries/:id", (request, response, next) => {
-	const { name, number } = request.body;
-
-	Entry.findById(request.params.id)
-		.then((entry) => {
-			if (!entry) {
-				return response.status(404).end();
+	const body = request.body;
+	const entry = {
+		name: body.name,
+		number: body.number,
+	};
+	Entry.findByIdAndUpdate(request.params.id, entry, {
+		new: true,
+		runValidators: true,
+	})
+		.then((updatedNumber) => {
+			if (updatedNumber) {
+				response.json(updatedNumber);
+			} else {
+				response.status(404).end();
 			}
-
-			entry.name = name;
-			entry.number = number;
-
-			return entry.save().then((updatedEntry) => {
-				response.json(updatedEntry);
-			});
 		})
 		.catch((error) => next(error));
 });
 
-app.post("/api/entries", (request, response) => {
+app.post("/api/entries", (request, response, next) => {
 	const body = request.body;
 
 	if (!body.name) {
@@ -100,9 +101,12 @@ app.post("/api/entries", (request, response) => {
 		number: body.number,
 	});
 
-	entry.save().then((savedEntry) => {
-		response.json(savedEntry);
-	});
+	entry
+		.save()
+		.then((savedEntry) => {
+			response.json(savedEntry);
+		})
+		.catch((error) => next(error));
 });
 
 const unknownEndpoint = (request, response) => {
@@ -115,6 +119,9 @@ const errorHandler = (error, request, response, next) => {
 	console.error(error.message);
 	if (error.name === "CastError") {
 		return response.status(400).send({ error: "malformatted id" });
+	}
+	if (error.name === "ValidationError") {
+		return response.status(400).json({ error: error.message });
 	}
 	next(error);
 };
