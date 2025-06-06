@@ -1,7 +1,30 @@
 const express = require("express");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
+
 const app = express();
 const cors = require("cors");
+
+const password = process.argv[2];
+const url = `mongodb+srv://burscheidt:${password}@cluster0.pmxvhmu.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`;
+
+mongoose.set("strictQuery", false);
+mongoose.connect(url);
+
+const entrySchema = new mongoose.Schema({
+	name: String,
+	number: String,
+});
+
+const Entry = mongoose.model("Entry", entrySchema);
+
+entrySchema.set("toJSON", {
+	transform: (document, returnedObject) => {
+		returnedObject.id = returnedObject._id.toString();
+		returnedObject._id = undefined;
+		returnedObject.__v = undefined;
+	},
+});
 
 morgan.token("id", function getId(req) {
 	return req.id;
@@ -16,7 +39,7 @@ app.use(
 	morgan(":method :url :status :res[content-length] - :response-time ms :body"),
 );
 
-let entries = [
+/*let entries = [
 	{
 		id: "1",
 		name: "Arto Hellas",
@@ -37,14 +60,16 @@ let entries = [
 		name: "Mary Poppendieck",
 		number: "39-23-6423122",
 	},
-];
+];*/
 
 app.get("/", (request, response) => {
 	response.send("<h1>Hello World!</h1>");
 });
 
 app.get("/api/entries", (request, response) => {
-	response.json(entries);
+	Entry.find({}).then((entries) => {
+		response.json(entries);
+	});
 });
 
 app.get("/api/entries/:id", (request, response) => {
