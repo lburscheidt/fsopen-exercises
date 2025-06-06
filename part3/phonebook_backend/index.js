@@ -32,6 +32,16 @@ app.get("/api/entries", (request, response) => {
 	response.json(entries);
 });
 
+app.get("/api/entries/:id", (request, response) => {
+	const id = request.params.id;
+	const entry = entries.find((entry) => entry.id === id);
+	if (entry) {
+		response.json(entry);
+	} else {
+		response.status(404).end();
+	}
+});
+
 app.get("/info", (request, response) => {
 	const date = new Date();
 	response.send(
