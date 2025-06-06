@@ -30,13 +30,17 @@ const Part = ({ name, exercises }) => {
 };
 
 const Total = ({ parts }) => {
-	const total = parts.map((part) => part.exercises).reduce((s, p) => s + p, 0);
+	const total = parts.reduce((accumulator, part) => {
+		return accumulator + part.exercises;
+	}, 0);
 	return (
 		<p>
 			<strong>Total of {total} exercises</strong>
 		</p>
 	);
 };
+
+
 
 const App = () => {
 	const course = {
