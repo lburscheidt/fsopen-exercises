@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import Weather from "./Weather";
 const Country = ({ ctry }) => {
 	const country = ctry;
 	const cca3 = country.cca3;
@@ -22,6 +22,7 @@ const Country = ({ ctry }) => {
 				))}
 			</ul>
 			<img className="flag" src={flag} alt={`Flag of ${name}`} />
+			<Weather lat={lat} lon={lon} capital={capital} />
 		</div>
 	);
 };
@@ -46,7 +47,16 @@ const CountriesList = ({ searchInput, filteredCountries }) => {
 				{showCountry.map((country, index) => (
 					<li key={index}>
 						{country.name.common}
-
+						<input
+							key={index}
+							type="button"
+							value={showCountry[index].show ? "hide" : "show"}
+							onClick={() => {
+								const copy = [...showCountry];
+								copy[index].show = !copy[index].show;
+								setShowCountry(copy);
+							}}
+						/>
 						{country.show ? <Country ctry={country} /> : null}
 					</li>
 				))}
