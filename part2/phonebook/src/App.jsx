@@ -45,17 +45,19 @@ const Entries = (props) => {
 	return (
 		<div>
 			{props.filteredEntries.map((entry) => (
-				<Entry key={entry.name} entry={entry} />
+				<Entry key={entry.name} entry={entry} deleteEntry={props.deleteEntry} />
 			))}
 		</div>
 	);
 };
 
-const Entry = ({ entry }) => {
+const Entry = (props) => {
 	return (
-		<p key={entry.name}>
-			{" "}
-			{entry.name} {entry.number}
+		<p key={props.entry.name}>
+			{props.entry.name} {props.entry.number} {props.entry.id}{" "}
+			<button type="button" onClick={() => props.deleteEntry(props.entry.id)}>
+				Delete{" "}
+			</button>
 		</p>
 	);
 };
@@ -115,6 +117,14 @@ const App = () => {
 		}
 	};
 
+	const deleteEntry = (id) => {
+		if (window.confirm("Delete?")) {
+			entryService.remove(id).then((response) => {
+				setEntries(entries.filter((entry) => entry.id !== id));
+			});
+		}
+	};
+
 	return (
 		<div>
 			<h2>Phone book</h2>
@@ -128,7 +138,12 @@ const App = () => {
 				handleNumberChange={handleNumberChange}
 			/>
 			<h2>Numbers</h2>
-			<Entries filteredEntries={filteredEntries} filter={filter} />
+			<Entries
+				filteredEntries={filteredEntries}
+				filter={filter}
+				setEntries={setEntries}
+				deleteEntry={deleteEntry}
+			/>
 		</div>
 	);
 };
