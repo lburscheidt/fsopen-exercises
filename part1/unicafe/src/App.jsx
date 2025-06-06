@@ -4,23 +4,34 @@ const Statistics = (props) => {
 	const symbol = "%";
 	if (props.all > 0) {
 		return (
-			<>
-				<StatisticLine text="good" value={props.good} />
-				<StatisticLine text="neutral" value={props.neutral} />
-				<StatisticLine text="bad" value={props.bad} />
-				<StatisticLine text="all" value={props.all} />
-				<StatisticLine text="average" value={props.average} />
-				<StatisticLine text="positive" value={props.positive} symbol={symbol} />
-			</>
+			<table>
+				<tbody>
+					<StatisticLine text="good" value={props.good} />
+					<StatisticLine text="neutral" value={props.neutral} />
+					<StatisticLine text="bad" value={props.bad} />
+					<StatisticLine text="all" value={props.all} />
+					<StatisticLine text="average" value={props.average} />
+					<StatisticLine text="positive" value={props.positive} />
+				</tbody>
+			</table>
 		);
 	}
 };
 
 const StatisticLine = (props) => {
+	if (props.text === "positive") {
+		return (
+			<tr>
+				<td>{props.text} </td>
+				<td>{props.value} % </td>
+			</tr>
+		);
+	}
 	return (
-		<p>
-			{props.text} {props.value} {props.symbol}
-		</p>
+		<tr>
+			<td>{props.text} </td>
+			<td>{props.value} </td>
+		</tr>
 	);
 };
 
