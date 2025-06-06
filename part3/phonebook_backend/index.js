@@ -37,10 +37,9 @@ app.get("/api/entries/:id", (request, response) => {
 });
 
 app.delete("/api/entries/:id", (request, response) => {
-	const id = request.params.id;
-	entries = entries.filter((entry) => entry.id !== id);
-
-	response.status(204).end();
+	Entry.findByIdAndDelete(request.params.id).then((result) => {
+		response.status(204).end();
+	});
 });
 
 app.get("/info", (request, response) => {
