@@ -5,7 +5,6 @@ const morgan = require("morgan");
 const Entry = require("./models/entry");
 
 const app = express();
-const cors = require("cors");
 
 morgan.token("id", function getId(req) {
 	return req.id;
