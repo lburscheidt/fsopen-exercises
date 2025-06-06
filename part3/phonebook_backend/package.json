@@ -1,0 +1,17 @@
+{
+	"name": "phonebook_backend",
+	"version": "1.0.0",
+	"description": "",
+	"license": "Unlicense",
+	"author": "",
+	"type": "commonjs",
+	"main": "index.js",
+	"scripts": {
+		"dev": "node --watch index.js",
+		"start": "node index.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"express": "^5.1.0"
+	}
+}
