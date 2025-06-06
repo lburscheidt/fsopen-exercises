@@ -55,7 +55,10 @@ const Entry = (props) => {
 	return (
 		<p key={props.entry.name}>
 			{props.entry.name} {props.entry.number} {props.entry.id}{" "}
-			<button type="button" onClick={() => props.deleteEntry(props.entry.id)}>
+			<button
+				type="button"
+				onClick={() => props.deleteEntry(props.entry.id, props.entry.name)}
+			>
 				Delete{" "}
 			</button>
 		</p>
@@ -66,6 +69,8 @@ const App = () => {
 	const [newName, setNewName] = useState("");
 	const [newNumber, setNewNumber] = useState("");
 	const [filter, setFilter] = useState("");
+	const [message, setMessage] = useState("");
+	const [msgType, setMsgType] = useState("");
 
 	/**Fetch initial entries from server */
 	useEffect(() => {
@@ -101,7 +106,11 @@ const App = () => {
 		const existingEntry = entries.find((entry) => entry.name === newEntry.name);
 		/**alert when someone's name is already in the phone book */
 		if (existingEntry) {
-			if (window.confirm(`${newName} is already in the phone book`)) {
+			if (
+				window.confirm(
+					`${newName} is already in the phone book, replace number?`,
+				)
+			) {
 				entryService.update(existingEntry.id, newEntry).then((response) => {
 					setEntries(
 						entries.map((entry) =>
@@ -111,6 +120,12 @@ const App = () => {
 				});
 			}
 			/**reset newName and newNumber */
+			setMessage(`Successfully updated information for ${existingEntry.name}`);
+			setMsgType("success");
+			setTimeout(() => {
+				setMessage("");
+				setMsgType("");
+			}, 5000);
 			setNewName("");
 			setNewNumber("");
 		} else {
@@ -122,20 +137,37 @@ const App = () => {
 			/**reset newName and newNumber */
 			setNewName("");
 			setNewNumber("");
+			setMessage(`Successfully added ${newEntry.name}`);
+			setMsgType("success");
+			setTimeout(() => {
+				setMessage("");
+				setMsgType("");
+			}, 5000);
 		}
 	};
 
-	const deleteEntry = (id) => {
+	const deleteEntry = (id, name) => {
 		if (window.confirm("Delete?")) {
 			entryService.remove(id).then((response) => {
 				setEntries(entries.filter((entry) => entry.id !== id));
 			});
+			setMessage(`Successfully deleted ${name}`);
+			setMsgType("success");
+			setTimeout(() => {
+				setMessage("");
+				setMsgType("");
+			}, 5000);
 		}
+	};
+
+	const Notification = ({ message, msgType }) => {
+		return <div className={msgType}>{message}</div>;
 	};
 
 	return (
 		<div>
 			<h2>Phone book</h2>
+			<Notification message={message} msgType={msgType} />
 			<h3>Add a new entry</h3>
 			<Filter filter={filter} handleFilter={handleFilter} />
 			<EntryForm
