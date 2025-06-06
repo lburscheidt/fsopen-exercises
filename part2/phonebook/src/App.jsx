@@ -111,13 +111,34 @@ const App = () => {
 					`${newName} is already in the phone book, replace number?`,
 				)
 			) {
-				entryService.update(existingEntry.id, newEntry).then((response) => {
-					setEntries(
-						entries.map((entry) =>
-							entry.id !== newEntry.id ? entry : response,
-						),
-					);
-				});
+				const updatedEntry = {
+					...existingEntry,
+					number: newNumber,
+				};
+				entryService
+					.update(existingEntry.id, updatedEntry)
+					.then((response) => {
+						setEntries(
+							entries.map((entry) =>
+								entry.id !== updatedEntry.id ? entry : response,
+							),
+						);
+						setNewName("");
+						setNewNumber("");
+					})
+					.catch((error) => {
+						setEntries(entries.filter((entry) => entry.id !== updatedEntry.id));
+						setMessage(
+							`Information for ${existingEntry.name} already removed from server`,
+						);
+						setMsgType("error");
+						setTimeout(() => {
+							setMessage("");
+							setMsgType("");
+						}, 5000);
+						setNewName("");
+						setNewNumber("");
+					});
 			}
 			/**reset newName and newNumber */
 			setMessage(`Successfully updated information for ${existingEntry.name}`);
